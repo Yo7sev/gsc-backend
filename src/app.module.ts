@@ -8,12 +8,14 @@ import { AdminsModule } from './admins/admins.module';
 import { MatchesModule } from './matches/matches.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { FieldsModule } from './fields/fields.module';
+import { TimeSlotsModule } from './timeslots/timeslots.module';
 import { Player } from './players/entities/player.entity/player.entity';
 import { Admin } from './admins/entities/admin.entity/admin.entity';
 import { Match } from './matches/entities/match.entity/match.entity';
 import { Booking } from './bookings/entities/booking.entity/booking.entity';
 import { Field } from './fields/entities/field.entity/field.entity';
 import { FieldRating } from './fields/entities/field-rating.entity/field-rating.entity';
+import { TimeSlot } from './timeslots/entities/timeslot.entity/timeslot.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { FieldRating } from './fields/entities/field-rating.entity/field-rating.
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
-        entities: [Player, Admin, Match, Booking, Field, FieldRating],
+        entities: [Player, Admin, Match, Booking, Field, FieldRating, TimeSlot],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -37,6 +39,7 @@ import { FieldRating } from './fields/entities/field-rating.entity/field-rating.
     MatchesModule,
     BookingsModule,
     FieldsModule,
+    TimeSlotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
