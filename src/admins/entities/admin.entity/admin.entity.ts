@@ -50,9 +50,11 @@ export class Admin {
   @Column({ nullable: true })
   approvedBy: number;
 
-  // Which field this manager owns
   @Column({ nullable: true })
   fieldId: number;
+
+  @Column({ default: false })
+  isVerified: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

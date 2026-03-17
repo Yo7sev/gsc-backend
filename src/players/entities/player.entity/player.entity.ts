@@ -34,6 +34,9 @@ export class Player {
   @Column({ default: 0 })
   level: number;
 
+  @Column({ default: false })
+  isVerified: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 }

@@ -6,10 +6,21 @@ import { Admin } from './entities/admin.entity/admin.entity';
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
-  // Field Manager requests access
+  // Step 1: Field Manager registers → sends OTP
   @Post('request')
-  requestAccess(@Body() adminData: Partial<Admin>): Promise<Admin> {
+  requestAccess(
+    @Body() adminData: Partial<Admin>,
+  ): Promise<{ message: string; adminId: number }> {
     return this.adminsService.requestAccess(adminData);
+  }
+
+  // Step 2: Field Manager verifies email
+  @Post('verify-email')
+  verifyEmail(
+    @Body('email') email: string,
+    @Body('code') code: string,
+  ): Promise<{ message: string }> {
+    return this.adminsService.verifyEmail(email, code);
   }
 
   // Main Admin sees all Field Managers

@@ -1,14 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Player } from './entities/player.entity/player.entity';
+import { OtpService } from '../otp/otp.service';
+import { OtpType } from '../otp/entities/otp.entity/otp.entity';
 
 @Injectable()
 export class PlayersService {
   constructor(
     @InjectRepository(Player)
     private playersRepository: Repository<Player>,
+    private otpService: OtpService,
   ) {}
+
+  // Step 1: Register player and send OTP
+  async register(
+    playerData: Partial<Player>,
+  ): Promise<{ message: string; playerId: number }> {
+    // Check if email already exists
+    const existing = await this.playersRepository.findOneBy({
+      email: playerData.email,
+    });
+    if (existing) {
+      throw new BadRequestException('Email already registered');
+    }
+
+    // Create player as unverified
+    const player = this.playersRepository.create({
+      ...playerData,
+      isVerified: false,
+    });
+    const saved = await this.playersRepository.save(player);
+
+    // Send OTP
+    await this.otpService.sendOtp(playerData.email!, OtpType.PLAYER);
+
+    return {
+      message: `OTP sent to ${playerData.email}. Please verify your account.`,
+      playerId: saved.id,
+    };
+  }
+
+  // Step 2: Verify OTP
+  async verifyEmail(email: string, code: string): Promise<{ message: string }> {
+    await this.otpService.verifyOtp(email, code, OtpType.PLAYER);
+
+    const player = await this.playersRepository.findOneBy({ email });
+    if (!player) throw new BadRequestException('Player not found');
+
+    player.isVerified = true;
+    await this.playersRepository.save(player);
+
+    return { message: 'Email verified successfully! You can now login.' };
+  }
 
   async findAll(): Promise<Player[]> {
     return this.playersRepository.find();

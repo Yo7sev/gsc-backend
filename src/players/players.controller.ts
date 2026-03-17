@@ -14,6 +14,23 @@ import { Player } from './entities/player.entity/player.entity';
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
+  // Step 1: Register player → sends OTP
+  @Post('register')
+  register(
+    @Body() playerData: Partial<Player>,
+  ): Promise<{ message: string; playerId: number }> {
+    return this.playersService.register(playerData);
+  }
+
+  // Step 2: Verify OTP → account activated
+  @Post('verify-email')
+  verifyEmail(
+    @Body('email') email: string,
+    @Body('code') code: string,
+  ): Promise<{ message: string }> {
+    return this.playersService.verifyEmail(email, code);
+  }
+
   @Get()
   findAll(): Promise<Player[]> {
     return this.playersService.findAll();
