@@ -10,6 +10,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { FieldsModule } from './fields/fields.module';
 import { TimeSlotsModule } from './timeslots/timeslots.module';
 import { OtpModule } from './otp/otp.module';
+import { AuthModule } from './auth/auth.module';
 import { Player } from './players/entities/player.entity/player.entity';
 import { Admin } from './admins/entities/admin.entity/admin.entity';
 import { Match } from './matches/entities/match.entity/match.entity';
@@ -52,6 +53,7 @@ import { Otp } from './otp/entities/otp.entity/otp.entity';
     FieldsModule,
     TimeSlotsModule,
     OtpModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

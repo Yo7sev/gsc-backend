@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Player } from './entities/player.entity/player.entity';
 import { OtpService } from '../otp/otp.service';
 import { OtpType } from '../otp/entities/otp.entity/otp.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PlayersService {
@@ -15,7 +16,7 @@ export class PlayersService {
 
   // Step 1: Register player and send OTP
   async register(
-    playerData: Partial<Player>,
+    playerData: Partial<Player> & { password?: string },
   ): Promise<{ message: string; playerId: number }> {
     // Check if email already exists
     const existing = await this.playersRepository.findOneBy({
@@ -25,9 +26,16 @@ export class PlayersService {
       throw new BadRequestException('Email already registered');
     }
 
+    // Hash password if provided
+    let hashedPassword: string | undefined;
+    if (playerData.password) {
+      hashedPassword = await bcrypt.hash(playerData.password, 10);
+    }
+
     // Create player as unverified
     const player = this.playersRepository.create({
       ...playerData,
+      password: hashedPassword,
       isVerified: false,
     });
     const saved = await this.playersRepository.save(player);
